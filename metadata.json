@@ -1,0 +1,8 @@
+{
+  "name": "Remix Host or Hold DC",
+  "description": "An interactive assessment tool helping Washington, DC homeowners decide whether to list their home on Airbnb.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
