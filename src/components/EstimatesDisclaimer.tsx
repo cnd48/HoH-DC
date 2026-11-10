@@ -15,7 +15,7 @@ export const EstimatesDisclaimer: React.FC<EstimatesDisclaimerProps> = ({
       <div className={`pt-4 border-t border-slate-200/80 flex items-start gap-2 text-[11px] text-slate-500 leading-relaxed ${className}`}>
         <AlertCircle className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
         <p>
-          <strong className="text-slate-700 font-semibold">Estimates Disclaimer:</strong> All revenue figures, nightly rates, expenses, tax obligations, and statutory projections featured in this application are estimates for informational and planning purposes only. Actual market earnings, occupancy, and DC licensing outcomes may vary. Not legal, financial, or tax advice.
+          <strong className="text-slate-700 font-semibold">Disclaimer:</strong> The figures featured in this app (including nightly rates, revenue, occupancy, expenses, and mortgage coverage) are estimates for informational and planning purposes only. Actual market performance and DC DLCP licensing outcomes may vary. This tool does not provide legal, financial, or tax advice.
         </p>
       </div>
     );
@@ -23,7 +23,7 @@ export const EstimatesDisclaimer: React.FC<EstimatesDisclaimerProps> = ({
 
   return (
     <div
-      className={`rounded-xl bg-slate-50/90 border border-slate-200 p-3.5 sm:p-4 text-xs text-slate-600 space-y-1 ${className}`}
+      className={`rounded-xl bg-slate-50/90 border border-slate-200 p-3.5 sm:p-4 text-xs text-slate-600 space-y-1.5 ${className}`}
       role="note"
       aria-label="Estimates Disclaimer"
     >
@@ -32,7 +32,7 @@ export const EstimatesDisclaimer: React.FC<EstimatesDisclaimerProps> = ({
         <span>Important Estimates & Regulatory Disclaimer</span>
       </div>
       <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed">
-        All financial figures, nightly rates, occupancy estimates, mortgage coverage percentages, and regulatory rules featured in this application are estimates based on Washington, DC municipal data and typical market performance. Actual host revenue, expenses, and DLCP licensing eligibility may vary based on specific property conditions, season, and platform policy. This application provides educational guidance and does not constitute formal legal, accounting, or real estate advisory services.
+        <strong>Disclaimer:</strong> The figures featured in this app are estimates based on Washington, DC municipal data, typical neighborhood pricing, and general regulatory benchmarks. Actual host earnings, expenses, occupancy, and DLCP licensing eligibility may vary based on your specific property, timing, and platform policies. Not formal legal, accounting, or real estate advisory services.
       </p>
     </div>
   );

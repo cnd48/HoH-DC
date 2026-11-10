@@ -134,7 +134,7 @@ export function getMedianPriceForSpace(
 
 export function getMedianPriceForRentalSpace(
   data: NeighborhoodData | undefined,
-  spaceType: 'private_room' | 'basement_unit' | 'whole_home'
+  spaceType: 'private_room' | 'basement_unit' | 'whole_home' | string | undefined | null
 ): number {
   if (!data) return 200;
   if (spaceType === 'private_room') {

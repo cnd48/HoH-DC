@@ -501,14 +501,14 @@ export const Step5Verdict: React.FC<Step5VerdictProps> = ({
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative">
             <select
-              defaultValue=""
+              value=""
               onChange={(e) => {
                 if (e.target.value) onGoToStep(e.target.value as StepId);
               }}
               className="h-10 pl-3 pr-8 rounded-xl bg-slate-50 border-2 border-slate-300 text-xs font-bold text-slate-800 appearance-none cursor-pointer focus:outline-none focus:border-rose-500 transition-colors"
               aria-label="Jump to a specific step"
             >
-              <option value="" disabled>Select</option>
+              <option value="">Select</option>
               <option value="home">Step 1: Your Home</option>
               <option value="eligibility">Step 2: DC Eligibility</option>
               <option value="earnings">Step 3: Neighborhood Earnings</option>

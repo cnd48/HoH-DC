@@ -87,7 +87,8 @@ export const Step3Earnings: React.FC<Step3EarningsProps> = ({
   };
 
   const handleResetToMedian = () => {
-    const medianRate = getMedianPriceForRentalSpace(activeNeighborhoodData, answers.spaceType);
+    const spaceType = (answers.spaceType as RentalSpaceType) || 'basement_unit';
+    const medianRate = getMedianPriceForRentalSpace(activeNeighborhoodData, spaceType);
     onChange({
       nightlyRate: Math.round(medianRate)
     });
@@ -144,7 +145,7 @@ export const Step3Earnings: React.FC<Step3EarningsProps> = ({
       : 3600;
 
   const currentMedianRate = Math.round(
-    getMedianPriceForRentalSpace(activeNeighborhoodData, answers.spaceType)
+    getMedianPriceForRentalSpace(activeNeighborhoodData, (answers.spaceType as RentalSpaceType) || 'basement_unit')
   );
 
   // --- SEASONALITY DATA (DC Index) ---
@@ -202,10 +203,17 @@ export const Step3Earnings: React.FC<Step3EarningsProps> = ({
               Mortgage Relief Metric
             </span>
             <div className="text-2xl sm:text-4xl font-extrabold tracking-tight">
-              Hosting could cover <span className="text-rose-400 tabular-nums">{mortgageCoveragePercent}%</span> of your mortgage.
+              {answers.nightlyRate > 0 ? (
+                <>Hosting could cover <span className="text-rose-400 tabular-nums">{mortgageCoveragePercent}%</span> of your mortgage.</>
+              ) : (
+                <>Project your <span className="text-rose-400">mortgage relief</span> & DC cashflow.</>
+              )}
             </div>
             <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
-              Based on ${answers.monthlyMortgage.toLocaleString()}/mo (${annualMortgage.toLocaleString()}/yr) in housing costs and a projected annual net profit of <strong className="text-white">${netIncome.toLocaleString()}</strong> after all DC platform fees, cleaning, and supplies.
+              {answers.nightlyRate > 0
+                ? `Based on $${answers.monthlyMortgage.toLocaleString()}/mo ($${annualMortgage.toLocaleString()}/yr) in housing costs and a projected annual net profit of $${netIncome.toLocaleString()} after all DC platform fees, cleaning, and supplies.`
+                : `Select your Washington, DC neighborhood, space type, and nightly rate below to calculate personalized net revenue and mortgage offset.`
+              }
             </p>
           </div>
 
@@ -246,7 +254,7 @@ export const Step3Earnings: React.FC<Step3EarningsProps> = ({
               onChange={(e) => handleNeighborhoodChange(e.target.value)}
               className="w-full h-12 px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-300 text-slate-900 font-semibold text-sm sm:text-base focus:bg-white focus:border-rose-500 focus:outline-none transition-colors cursor-pointer appearance-none"
             >
-              <option value="" disabled>Select</option>
+              <option value="">Select</option>
               {DC_NEIGHBORHOODS.map((n) => (
                 <option key={n.neighborhood} value={n.neighborhood}>
                   {n.neighborhood} ({n.listings} active listings · Med. ${Math.round(n.medianNightlyPrice)}/night)
@@ -275,7 +283,7 @@ export const Step3Earnings: React.FC<Step3EarningsProps> = ({
                 onChange={(e) => handleSpaceTypeChange(e.target.value as RentalSpaceType)}
                 className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border-2 border-slate-300 text-slate-900 font-semibold text-xs sm:text-sm focus:bg-white focus:border-rose-500 focus:outline-none transition-colors cursor-pointer appearance-none"
               >
-                <option value="" disabled>Select</option>
+                <option value="">Select</option>
                 <option value="basement_unit">Basement Unit / In-Law Suite (English basement or self-contained unit)</option>
                 <option value="private_room">Private Room / Master Suite (Single bedroom inside home)</option>
                 <option value="whole_home">Whole Home (Entire rowhouse, condo, or house)</option>
@@ -301,7 +309,7 @@ export const Step3Earnings: React.FC<Step3EarningsProps> = ({
                 onChange={(e) => onChange({ hostingMode: e.target.value as HostingMode })}
                 className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border-2 border-slate-300 text-slate-900 font-semibold text-xs sm:text-sm focus:bg-white focus:border-rose-500 focus:outline-none transition-colors cursor-pointer appearance-none"
               >
-                <option value="" disabled>Select</option>
+                <option value="">Select</option>
                 <option value="hosted">Hosted Stays (Host Present · Unlimited Nights under DC Law)</option>
                 <option value="away">Away / Vacation Stays (Host Traveling · 90-Night DC Statutory Cap)</option>
               </select>
@@ -329,19 +337,32 @@ export const Step3Earnings: React.FC<Step3EarningsProps> = ({
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-xs sm:text-sm font-bold text-[#0D1B2A]">
-                Typical in {activeNeighborhoodData.neighborhood}:
-              </div>
-              <div className="text-sm sm:text-base font-extrabold text-rose-600 mt-0.5">
-                ${currentMedianRate}/night
-                <span className="text-xs font-semibold text-slate-600 ml-1.5">
-                  (based on {activeNeighborhoodData.listings} listings)
-                </span>
-              </div>
+              {answers.neighborhood ? (
+                <>
+                  <div className="text-xs sm:text-sm font-bold text-[#0D1B2A]">
+                    Typical in {activeNeighborhoodData.neighborhood}:
+                  </div>
+                  <div className="text-sm sm:text-base font-extrabold text-rose-600 mt-0.5">
+                    ${currentMedianRate}/night
+                    <span className="text-xs font-semibold text-slate-600 ml-1.5">
+                      (based on {activeNeighborhoodData.listings} active listings)
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="text-xs sm:text-sm font-bold text-[#0D1B2A]">
+                    DC Neighborhood Market Baseline
+                  </div>
+                  <div className="text-xs text-slate-600 mt-0.5">
+                    Select a neighborhood from the dropdown above to view municipal rates and listings.
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
-          {answers.nightlyRate !== currentMedianRate && (
+          {answers.neighborhood && answers.nightlyRate !== currentMedianRate && (
             <button
               type="button"
               onClick={handleResetToMedian}

@@ -140,7 +140,7 @@ export const Step1YourHome: React.FC<Step1YourHomeProps> = ({
               onChange={(e) => onChange({ isMainResidence: (e.target.value as MainResidenceChoice) || null })}
               className="w-full h-12 pl-4 pr-10 rounded-xl bg-slate-50 border-2 border-slate-300 hover:border-slate-400 focus:border-rose-500 focus:bg-white text-slate-900 font-semibold text-xs sm:text-sm appearance-none transition-all outline-none cursor-pointer"
             >
-              <option value="" disabled>
+              <option value="">
                 Select
               </option>
               <option value="yes">
@@ -204,7 +204,7 @@ export const Step1YourHome: React.FC<Step1YourHomeProps> = ({
               onChange={(e) => onChange({ householdComposition: (e.target.value as HouseholdChoice) || null })}
               className="w-full h-12 pl-4 pr-10 rounded-xl bg-slate-50 border-2 border-slate-300 hover:border-slate-400 focus:border-rose-500 focus:bg-white text-slate-900 font-semibold text-xs sm:text-sm appearance-none transition-all outline-none cursor-pointer"
             >
-              <option value="" disabled>
+              <option value="">
                 Select
               </option>
               {householdOptions.map((opt) => (

@@ -44,10 +44,11 @@ export const Step2Eligibility: React.FC<Step2EligibilityProps> = ({
   const [showStatutoryDetails, setShowStatutoryDetails] = useState(false);
   const result = calculateEligibility(step1Answers, answers);
 
+  const isLawModeAnswered = Boolean(answers.lawMode);
   const isCondoAnswered = answers.isCondoOrHoa !== null;
   const isHoaSubAnswered = answers.isCondoOrHoa === 'no' || answers.hoaAllowsStr !== null;
   const isOwnershipAnswered = answers.ownershipType !== null;
-  const isStep2Complete = isCondoAnswered && isHoaSubAnswered && isOwnershipAnswered;
+  const isStep2Complete = isLawModeAnswered && isCondoAnswered && isHoaSubAnswered && isOwnershipAnswered;
 
   // Combined Condo/HOA dropdown helper value
   const getCondoDropdownValue = () => {
@@ -126,10 +127,11 @@ export const Step2Eligibility: React.FC<Step2EligibilityProps> = ({
 
           <div className="relative sm:w-72">
             <select
-              value={answers.lawMode}
-              onChange={(e) => onChange({ lawMode: e.target.value as LawMode })}
+              value={answers.lawMode || ''}
+              onChange={(e) => onChange({ lawMode: (e.target.value as LawMode) || '' })}
               className="w-full h-10 pl-3 pr-9 rounded-xl bg-slate-50 border-2 border-slate-300 hover:border-slate-400 focus:border-rose-500 focus:bg-white text-xs font-bold text-slate-800 appearance-none outline-none cursor-pointer"
             >
+              <option value="">Select</option>
               <option value="current">Current Law: Act 22-559 (Active)</option>
               <option value="proposed_2026">Proposed 2026 Bill (Pending Reform)</option>
             </select>
@@ -176,7 +178,7 @@ export const Step2Eligibility: React.FC<Step2EligibilityProps> = ({
               onChange={(e) => handleCondoDropdownChange(e.target.value)}
               className="w-full h-12 pl-4 pr-10 rounded-xl bg-slate-50 border-2 border-slate-300 hover:border-slate-400 focus:border-rose-500 focus:bg-white text-slate-900 font-semibold text-xs sm:text-sm appearance-none transition-all outline-none cursor-pointer"
             >
-              <option value="" disabled>Select</option>
+              <option value="">Select</option>
               <option value="fee_simple">No — Fee-Simple Single Family / Rowhouse (No HOA or Condo Board)</option>
               <option value="condo_allowed">Yes — Condo / HOA (Bylaws explicitly allow short-term rentals)</option>
               <option value="condo_prohibited">Yes — Condo / HOA (Bylaws prohibit rentals &lt; 30 days)</option>
@@ -214,7 +216,7 @@ export const Step2Eligibility: React.FC<Step2EligibilityProps> = ({
               onChange={(e) => onChange({ ownershipType: (e.target.value as OwnershipChoice) || null })}
               className="w-full h-12 pl-4 pr-10 rounded-xl bg-slate-50 border-2 border-slate-300 hover:border-slate-400 focus:border-rose-500 focus:bg-white text-slate-900 font-semibold text-xs sm:text-sm appearance-none transition-all outline-none cursor-pointer"
             >
-              <option value="" disabled>Select</option>
+              <option value="">Select</option>
               <option value="personal">Individual Natural Person (In my personal name · DLCP license eligible)</option>
               <option value="entity">LLC, Corporation, or Trust (Corporate ownership · Barred under DC law)</option>
             </select>
@@ -261,7 +263,7 @@ export const Step2Eligibility: React.FC<Step2EligibilityProps> = ({
                     }
                     className="w-full h-11 pl-3 pr-8 rounded-xl bg-slate-50 border-2 border-slate-300 focus:border-rose-500 text-xs font-semibold text-slate-900 appearance-none outline-none cursor-pointer"
                   >
-                    <option value="" disabled>Select</option>
+                    <option value="">Select</option>
                     <option value="yes">Private Exterior Entrance (Separate doors)</option>
                     <option value="no">Shared Entrance (Through main family foyer)</option>
                   </select>
@@ -288,7 +290,7 @@ export const Step2Eligibility: React.FC<Step2EligibilityProps> = ({
                     }
                     className="w-full h-11 pl-3 pr-8 rounded-xl bg-slate-50 border-2 border-slate-300 focus:border-rose-500 text-xs font-semibold text-slate-900 appearance-none outline-none cursor-pointer"
                   >
-                    <option value="" disabled>Select</option>
+                    <option value="">Select</option>
                     <option value="no_private">Dedicated Private Bathroom & Kitchenette</option>
                     <option value="yes_shared">Shared Bathroom or Kitchen with Family</option>
                   </select>
@@ -320,7 +322,7 @@ export const Step2Eligibility: React.FC<Step2EligibilityProps> = ({
                     }
                     className="w-full h-11 pl-3 pr-8 rounded-xl bg-slate-50 border-2 border-slate-300 focus:border-rose-500 text-xs font-semibold text-slate-900 appearance-none outline-none cursor-pointer"
                   >
-                    <option value="" disabled>Select</option>
+                    <option value="">Select</option>
                     <option value="yes">Quiet Essential (Strict 10pm quiet hours)</option>
                     <option value="no">Normal Everyday Noise Acceptable</option>
                   </select>
@@ -347,7 +349,7 @@ export const Step2Eligibility: React.FC<Step2EligibilityProps> = ({
                     }
                     className="w-full h-11 pl-3 pr-8 rounded-xl bg-slate-50 border-2 border-slate-300 focus:border-rose-500 text-xs font-semibold text-slate-900 appearance-none outline-none cursor-pointer"
                   >
-                    <option value="" disabled>Select</option>
+                    <option value="">Select</option>
                     <option value="hire_help">Hiring Cleaning Help / Turnover Co-host</option>
                     <option value="self">Self-Managing Cleanings & Linens</option>
                   </select>
@@ -378,7 +380,7 @@ export const Step2Eligibility: React.FC<Step2EligibilityProps> = ({
                   }
                   className="w-full h-11 pl-3 pr-8 rounded-xl bg-slate-50 border-2 border-slate-300 focus:border-rose-500 text-xs font-semibold text-slate-900 appearance-none outline-none cursor-pointer"
                 >
-                  <option value="" disabled>Select</option>
+                  <option value="">Select</option>
                   <option value="under_30">Under 30 nights/year away (Occasional weekends & getaways)</option>
                   <option value="30_to_90">30 to 90 nights/year away (Fits DC 90-night Vacation Rental Cap)</option>
                   <option value="over_90">Over 90 nights/year away (Exceeds DC unhosted cap · requires hosted stays)</option>
@@ -409,7 +411,7 @@ export const Step2Eligibility: React.FC<Step2EligibilityProps> = ({
                   }
                   className="w-full h-11 pl-3 pr-8 rounded-xl bg-slate-50 border-2 border-slate-300 focus:border-rose-500 text-xs font-semibold text-slate-900 appearance-none outline-none cursor-pointer"
                 >
-                  <option value="" disabled>Select</option>
+                  <option value="">Select</option>
                   <option value="separate_unit">Separate Basement Apartment / English Basement</option>
                   <option value="spare_room">Spare Bedroom Suite (Shared hallway/kitchen)</option>
                   <option value="entire_home_away">Entire Home Only While Traveling Away</option>

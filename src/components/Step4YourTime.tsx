@@ -208,7 +208,7 @@ export const Step4YourTime: React.FC<Step4YourTimeProps> = ({
               onChange={(e) => handleHoursChange(parseInt(e.target.value, 10))}
               className="w-full h-11 pl-4 pr-10 rounded-xl bg-slate-50 border-2 border-slate-300 text-slate-900 font-semibold text-xs sm:text-sm focus:bg-white focus:border-rose-500 focus:outline-none transition-colors cursor-pointer appearance-none"
             >
-              <option value="" disabled>Select</option>
+              <option value="">Select</option>
               <option value={2}>Light Touch (2 hrs/week — Smart locks + hired turnover cleaner)</option>
               <option value={5}>Standard Host (5 hrs/week — Direct guest messaging & supply restocking)</option>
               <option value={9}>Hands-On Turnovers (9 hrs/week — Self-cleaning, laundry & in-person meets)</option>

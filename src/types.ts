@@ -90,7 +90,7 @@ export interface Step2Answers {
   isCondoOrHoa: CondoHoaChoice | null;
   hoaAllowsStr: HoaRulesChoice | null;
   ownershipType: OwnershipChoice | null;
-  lawMode: LawMode;
+  lawMode: LawMode | '';
   householdLiving: HouseholdLivingAnswers;
 }
 
@@ -151,7 +151,7 @@ export const INITIAL_ASSESSMENT_STATE: AssessmentState = {
     isCondoOrHoa: null,
     hoaAllowsStr: null,
     ownershipType: null,
-    lawMode: 'current',
+    lawMode: '',
     householdLiving: {
       hasPrivateEntrance: null,
       sharesKitchenBath: null,

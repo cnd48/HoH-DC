@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   Check
 } from 'lucide-react';
+import { EstimatesDisclaimer } from './EstimatesDisclaimer';
 
 interface ProcessingStepProps {
   assessment: AssessmentState;
@@ -241,6 +242,9 @@ export const ProcessingStep: React.FC<ProcessingStepProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Estimates Disclaimer at bottom of processing page */}
+      <EstimatesDisclaimer variant="subtle" />
     </div>
   );
 };

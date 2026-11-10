@@ -22,6 +22,8 @@ import { StepPreview } from './components/StepPreview';
 import { DCContextCard } from './components/DCContextCard';
 import { NavigationButtons } from './components/NavigationButtons';
 import { ChatDrawer } from './components/ChatDrawer';
+import { AssessmentSnapshot } from './components/AssessmentSnapshot';
+import { EstimatesDisclaimer } from './components/EstimatesDisclaimer';
 import { CheckCircle2, AlertTriangle, XCircle, Sparkles, Scale, TrendingUp, Clock, Shield, RotateCcw } from 'lucide-react';
 
 export default function App() {
@@ -122,6 +124,7 @@ export default function App() {
     assessment.step1.householdComposition !== null;
 
   const isCoreEligibilityComplete =
+    Boolean(assessment.step2.lawMode) &&
     assessment.step2.isCondoOrHoa !== null &&
     (assessment.step2.isCondoOrHoa === 'no' || assessment.step2.hoaAllowsStr !== null) &&
     assessment.step2.ownershipType !== null;
@@ -341,6 +344,13 @@ export default function App() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Main Assessment Column */}
             <div className="lg:col-span-8 space-y-6 print:col-span-12">
+              {/* Condensed Dropdown Assessment Snapshot on Each Step */}
+              <AssessmentSnapshot
+                assessment={assessment}
+                onGoToStep={handleStepSelect}
+                defaultOpen={false}
+              />
+
               <div key={assessment.currentStep} className="step-transition">
                 {assessment.currentStep === 'home' && (
                   <Step1YourHome
@@ -401,198 +411,20 @@ export default function App() {
                 onNext={handleNext}
               />
             </div>
+
+            {/* Estimates Disclaimer at bottom of assessment page */}
+            <EstimatesDisclaimer variant="subtle" />
           </div>
 
-          {/* Sticky Sidebar: DC Legal Context & Live Assessment Snapshot */}
+          {/* Sticky Sidebar: DC Legal Context & Live Assessment Snapshot in Dropdown Format */}
           <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 print:hidden">
-            {/* Real-time Assessment Snapshot Card */}
-            {hasAnyAnswers && (
-              <div className="bg-white rounded-2xl border-2 border-slate-200/90 p-5 shadow-sm space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                  <span className="text-xs font-bold text-[#0D1B2A] uppercase tracking-wider">
-                    Assessment Snapshot
-                  </span>
-                  <span className="text-[11px] font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
-                    {assessment.step2.lawMode === 'current' ? 'Current Law' : '2026 Bill'}
-                  </span>
-                </div>
-
-                <div className="space-y-2.5 text-xs">
-                  {assessment.user?.name && (
-                    <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
-                      <span className="text-slate-500 font-medium">Homeowner:</span>
-                      <span className="font-bold text-[#0D1B2A] text-right truncate max-w-[150px]">
-                        {assessment.user.name}
-                      </span>
-                    </div>
-                  )}
-                  {/* Step 1 Items */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Main Residence:</span>
-                    <span className="font-semibold text-slate-800 text-right">
-                      {assessment.step1.isMainResidence === 'yes'
-                        ? 'Yes (Primary)'
-                        : assessment.step1.isMainResidence === 'no'
-                        ? 'No (Second / Inherited)'
-                        : 'Unselected'}
-                    </span>
-                  </div>
-
-                  {/* Step 2 Items */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Property Type:</span>
-                    <span className="font-semibold text-slate-800 text-right">
-                      {assessment.step2.isCondoOrHoa === 'yes'
-                        ? `Condo/HOA (${assessment.step2.hoaAllowsStr === 'yes' ? 'Allowed' : assessment.step2.hoaAllowsStr === 'no' ? 'Blocked' : 'Unsure'})`
-                        : assessment.step2.isCondoOrHoa === 'no'
-                        ? 'Fee-Simple (No HOA)'
-                        : 'Unselected'}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Ownership:</span>
-                    <span className="font-semibold text-slate-800 text-right">
-                      {assessment.step2.ownershipType === 'personal'
-                        ? 'Individual (Personal)'
-                        : assessment.step2.ownershipType === 'entity'
-                        ? 'LLC / Trust (Corporate)'
-                        : 'Unselected'}
-                    </span>
-                  </div>
-
-                  {/* Step 2 Household Living Details if answered */}
-                  {assessment.step2.householdLiving?.hasPrivateEntrance && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Entrance:</span>
-                      <span className="font-semibold text-slate-800 text-right">
-                        {assessment.step2.householdLiving.hasPrivateEntrance === 'yes' ? 'Private Entrance' : 'Shared Entrance'}
-                      </span>
-                    </div>
-                  )}
-
-                  {assessment.step2.householdLiving?.sharesKitchenBath && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Facilities:</span>
-                      <span className="font-semibold text-slate-800 text-right">
-                        {assessment.step2.householdLiving.sharesKitchenBath === 'no_private' ? 'Private Bath/Kitchen' : 'Shared Facilities'}
-                      </span>
-                    </div>
-                  )}
-
-                  {assessment.step2.householdLiving?.isNoiseAConcern && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Noise Sensitivity:</span>
-                      <span className="font-semibold text-slate-800 text-right">
-                        {assessment.step2.householdLiving.isNoiseAConcern === 'yes' ? 'Quiet Essential' : 'Normal Noise Fine'}
-                      </span>
-                    </div>
-                  )}
-
-                  {assessment.step2.householdLiving?.managementPreference && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Turnover:</span>
-                      <span className="font-semibold text-slate-800 text-right">
-                        {assessment.step2.householdLiving.managementPreference === 'self' ? 'Self-Managed' : 'Hiring Help'}
-                      </span>
-                    </div>
-                  )}
-
-                  {assessment.step2.householdLiving?.travelNightsPerYear && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Annual Travel:</span>
-                      <span className="font-semibold text-slate-800 text-right">
-                        {assessment.step2.householdLiving.travelNightsPerYear === 'under_30' ? '< 30 nights' : assessment.step2.householdLiving.travelNightsPerYear === '30_to_90' ? '30–90 nights' : '90+ nights'}
-                      </span>
-                    </div>
-                  )}
-
-                  {assessment.step2.householdLiving?.spaceType && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Space Offered:</span>
-                      <span className="font-semibold text-slate-800 text-right">
-                        {assessment.step2.householdLiving.spaceType === 'separate_unit' ? 'Separate Unit' : assessment.step2.householdLiving.spaceType === 'spare_room' ? 'Spare Room' : 'Entire Home Away'}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Eligibility Result Pill */}
-                <div className={`mt-3 pt-3 border-t border-slate-100 flex items-center justify-between p-2.5 rounded-xl ${
-                  currentEligibility.status === 'green'
-                    ? 'bg-emerald-50 text-emerald-900 border border-emerald-200'
-                    : currentEligibility.status === 'amber'
-                    ? 'bg-amber-50 text-amber-900 border border-amber-200'
-                    : 'bg-rose-50 text-rose-900 border border-rose-200'
-                }`}>
-                  <div className="flex items-center gap-2 text-xs font-bold">
-                    {currentEligibility.status === 'green' && <CheckCircle2 className="w-4 h-4 text-emerald-600" />}
-                    {currentEligibility.status === 'amber' && <AlertTriangle className="w-4 h-4 text-amber-600" />}
-                    {currentEligibility.status === 'red' && <XCircle className="w-4 h-4 text-rose-600" />}
-                    <span>{currentEligibility.status.toUpperCase()} ELIGIBILITY</span>
-                  </div>
-                </div>
-
-                {/* Step 3 Projected Revenue Strip in Sidebar */}
-                {assessment.step3?.nightlyRate > 0 && (
-                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1 text-xs">
-                    <div className="flex items-center justify-between text-slate-500 text-[11px]">
-                      <span>{assessment.step3.neighborhood.split(',')[0]}</span>
-                      <span>${assessment.step3.nightlyRate}/night · {assessment.step3.occupancyPercent}% occ</span>
-                    </div>
-                    <div className="flex items-center justify-between font-extrabold text-[#0D1B2A]">
-                      <span>Projected Net:</span>
-                      <span className="text-emerald-700 text-sm tabular-nums">
-                        ${currentEarnings.netIncome.toLocaleString()}/yr
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 4 Time Commitment & Risk Strip in Sidebar */}
-                {assessment.step4 && (
-                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-500 flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 text-slate-400" />
-                        Effort:
-                      </span>
-                      <span className="font-bold text-[#0D1B2A]">
-                        {assessment.step4.hoursPerWeek} hrs/wk (${currentEffectiveHourly}/hr)
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-1.5 border-t border-slate-200/70">
-                      <span className="text-slate-500 flex items-center gap-1">
-                        <Shield className="w-3.5 h-3.5 text-slate-400" />
-                        Risk Level:
-                      </span>
-                      <span className={`text-[11px] font-extrabold px-2 py-0.5 rounded-full ${
-                        currentRisks.overallRiskLevel === 'low'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : currentRisks.overallRiskLevel === 'medium'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-rose-100 text-rose-800'
-                      }`}>
-                        {currentRisks.overallRiskLevel.toUpperCase()}
-                      </span>
-                    </div>
-
-                    {/* Step 5 Verdict Summary in Sidebar */}
-                    <div className={`mt-2 p-2 rounded-xl border flex items-center justify-between text-xs font-bold ${
-                      currentVerdict.decision === 'GO'
-                        ? 'bg-emerald-50 text-emerald-950 border-emerald-300'
-                        : currentVerdict.decision === 'GO_WITH_CONDITIONS'
-                        ? 'bg-amber-50 text-amber-950 border-amber-300'
-                        : 'bg-rose-50 text-rose-950 border-rose-300'
-                    }`}>
-                      <span>VERDICT:</span>
-                      <span className="font-extrabold">{currentVerdict.badgeLabel}</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
+            {/* Live Assessment Snapshot in Drop-Down format */}
+            <AssessmentSnapshot
+              assessment={assessment}
+              onGoToStep={handleStepSelect}
+              defaultOpen={false}
+              className="hidden lg:block"
+            />
 
             <DCContextCard />
           </div>
@@ -603,16 +435,21 @@ export default function App() {
       {/* 4. Mobile Bottom Navigation Spacer so content is not obscured */}
       <div className="h-20 sm:hidden print:hidden" />
 
-      {/* 5. Quiet Clean Footer */}
+      {/* 5. Quiet Clean Footer with Estimates Disclaimer on bottom of page */}
       <footer className="mt-auto border-t border-slate-200 bg-white py-6 text-xs text-slate-500 print:hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-[#0D1B2A]">Host or Hold DC</span>
-            <span className="text-slate-300">·</span>
-            <span>Washington, DC Short-Term Rental Assessment</span>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-3">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-[#0D1B2A]">Host or Hold DC</span>
+              <span className="text-slate-300">·</span>
+              <span>Washington, DC Short-Term Rental Assessment</span>
+            </div>
+            <div className="text-xs font-medium text-slate-600">
+              Educational tool, not legal advice. Rules checked November 2026.
+            </div>
           </div>
-          <div className="text-xs font-medium text-slate-600">
-            Educational tool, not legal advice. Rules checked November 2026.
+          <div className="pt-2 border-t border-slate-100 text-[11px] text-slate-500 text-center sm:text-left leading-relaxed">
+            <strong className="text-slate-700">Disclaimer:</strong> The figures, financial projections, nightly rates, expenses, and regulatory calculations featured in this application are estimates for informational and planning purposes only. Actual market earnings, occupancy, and DLCP licensing outcomes may vary.
           </div>
         </div>
       </footer>
